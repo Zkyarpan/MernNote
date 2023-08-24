@@ -1,6 +1,9 @@
 require("dotenv").config();
+import { react } from "@vitejs/plugin-react";
 const cors = require("cors");
 const express = require("express");
+const path = require("path");
+
 const connectDB = require("./connectDB");
 const Notes = require("./models/Notes");
 
@@ -12,6 +15,9 @@ connectDB();
 // Middlewares
 app.use(cors());
 app.use(express.json());
+
+// static files access
+app.use(express.static(path.join(__dirname, "../Client/dist")));
 
 // GET ALL NOTES
 app.get("/api/notes", async (req, res) => {
@@ -86,6 +92,10 @@ app.delete("/api/notes/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "An error occurred while updating notes" });
   }
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../Client/dist/index.html"));
 });
 
 app.get("*", (req, res) => {
